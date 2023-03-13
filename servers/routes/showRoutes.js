@@ -38,8 +38,14 @@ router.get('/:id/genre', async (req, res) =>{
 });
 
 
-router.put("/:id/watched", async (req, res) => {
+router.put("/:id/watched",[check("rating").not().isEmpty()], async (req, res) =>{
     try {
+        const errors = validationResult(req)
+
+        if (!errors.isEmpty()) {
+            res.json({ error: errors.array()});
+        };
+
         const id = req.params.id
         const updatedRating = req.body.rating
         const foundShow = await Show.findByPk(id)
@@ -53,8 +59,14 @@ router.put("/:id/watched", async (req, res) => {
     }
   });
 
-  router.put("/:id", async (req, res) => {
+  router.put("/:id",[check("status").not().isEmpty().trim().isLength({min: 5, max:25})], async (req, res) => {
     try {
+        const errors = validationResult(req)
+
+        if (!errors.isEmpty()) {
+            res.json({ error: errors.array()});
+        };
+            
         const id = req.params.id
         const updateStatus = req.body.status
         const foundShow = await Show.findByPk(id)
